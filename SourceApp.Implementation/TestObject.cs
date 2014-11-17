@@ -6,6 +6,8 @@ namespace SourceApp.Implementation
 {
 	public sealed class TestObject : ITestObject
 	{
+		private string _text;
+
 		public TestObject(Guid id)
 		{
 			ID = id;
@@ -26,7 +28,11 @@ namespace SourceApp.Implementation
 		/// <summary>
 		/// Any meanigless text
 		/// </summary>
-		public string Text { get; private set; }
+		public string Text
+		{
+			get { return _text ?? (_text = this.ID.ToString()); }
+			private set { _text = value; }
+		}
 
 		/// <summary>
 		/// Set the text of the object
