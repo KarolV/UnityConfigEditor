@@ -24,34 +24,43 @@ namespace SourceApp.Implementation
 
 			var guid = Guid.NewGuid();
 
-			switch (args[0])
+			foreach(var arg in args)
 			{
-				case "m":
-				case "mixed":
-					SetContainer_Mixed(container);
-					break;
-				case "c":
-				case "conv":
-					SetContainer_ByConvention(container);
-					break;
+				switch (arg)
+				{
+					case "m":
+					case "mixed":
+						SetContainer_Mixed(container);
+						break;
+					case "c":
+					case "conv":
+						SetContainer_ByConvention(container);
+						break;
+					case "x":
+					case "xml":
+						SetContainer_ByConfig(container);
+						container.RegisterType<ITestObject, TestObject>(new InjectionConstructor(guid));
+						break;
+				}
+
+				var manager = container.Resolve<IManager>();
+				//manager.GetTestObject().SetText(guid.ToString());
+				Console.WriteLine(manager.GetTestObject().ToString());
+
+				manager = container.Resolve<IManager>();
+				manager.GetTestObject().SetText("shit");
+				Console.WriteLine(manager.GetTestObject().ToString());
+
+				PressToContinue();
 			}
-
-			var manager = container.Resolve<IManager>();
-			//manager.GetTestObject().SetText(guid.ToString());
-			Console.WriteLine(manager.GetTestObject().ToString());
-
-			manager = container.Resolve<IManager>();
-			manager.GetTestObject().SetText("shit");
-			Console.WriteLine(manager.GetTestObject().ToString());
-
-			PressToContinue();
 		}
 
 		private static void SetContainer_ByConvention(IUnityContainer container)
 		{
-			container.RegisterTypes(AllClasses.FromLoadedAssemblies(),
-			                        WithMappings.FromAllInterfaces,
+			container.RegisterTypes(AllClasses.FromAssembliesInBasePath(),
+			                        WithMappings.FromMatchingInterface,
 			                        WithName.Default);
+			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()));
 		}
 
 		private static void SetContainer_Mixed(IUnityContainer container)
@@ -59,8 +68,12 @@ namespace SourceApp.Implementation
 			container.LoadConfiguration("testContainer");
 
 			container.RegisterType<ITestObject, TestObject>()
-					 //.RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()))
-					 ;
+					 .RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
+		}
+
+		private static void SetContainer_ByConfig(IUnityContainer container)
+		{
+			container.LoadConfiguration("testContainer");
 		}
 
 		private static void PressToContinue(bool isEmpty = false)

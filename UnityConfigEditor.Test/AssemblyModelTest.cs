@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using SourceApp.Implementation;
@@ -14,7 +15,6 @@ namespace UnityConfigEditor.Test
 	[TestClass]
 	public class AssemblyModelTest
 	{
-		private IUnityContainer _container;
 		private IEnumerable<string> _excludedContainerNames;
 
 		[TestInitialize]
@@ -27,41 +27,59 @@ namespace UnityConfigEditor.Test
 		[TestMethod]
 		public void RegisterClass_InCode_Test()
 		{
-			_container = new UnityContainer();
-			_container.RegisterType<ITestObject, TestObject>()
-			          .RegisterType<IManager, Manager>()
-			          .RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
+			var container = new UnityContainer();
 
-			const int expectedCount = 2;
+			container.RegisterType<ITestObject, TestObject>("noparam")
+			         .RegisterType<IManager, Manager>()
+			         .RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
 
-			CommonEvaluate(expectedCount);
+			const int expectedCount = 3;
+
+			CommonEvaluate(container, expectedCount);
+		}
+
+		[TestMethod]
+		public void RegisterClass_WithConfig_Test()
+		{
+			var container = new UnityContainer();
+
+			container.LoadConfiguration("fullContainer");
+
+			const int expectedCount = 3;
+
+			CommonEvaluate(container, expectedCount);
 		}
 
 		[TestMethod]
 		public void RegisterClass_ByConvention_Test()
 		{
-			_container = new UnityContainer();
-			_container.RegisterTypes(AllClasses.FromLoadedAssemblies(),
-			                         WithMappings.FromMatchingInterface,
-			                         WithName.Default);
+			var container = new UnityContainer();
+			container.RegisterTypes(AllClasses.FromAssembliesInBasePath(),
+			                        WithMappings.FromMatchingInterface,
+			                        WithName.Default);
 
-			const int expectedCount = 0;
-			CommonEvaluate(expectedCount);
+			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()));
+
+			const int expectedCount = 3;
+
+			CommonEvaluate(container, expectedCount);
 		}
 
-		private void CommonEvaluate(int expectedCount)
+		private void CommonEvaluate(IUnityContainer container, int expectedCount)
 		{
 			Assert.AreEqual(expectedCount,
-			                _container.Registrations
+			                container.Registrations
 			                          .Count(r => _excludedContainerNames
 				                                 .All(x => x != r.MappedToType.Name)));
 
 			foreach (var registration in 
-				_container.Registrations
+				container.Registrations
 				          .Where(r => _excludedContainerNames
 					                 .All(x => x != r.MappedToType.Name)))
 			{
 				Assert.IsNotNull(registration, string.Format("Registration is null"));
+				Console.WriteLine("Registration: {0}", registration.Name ?? "[default]");
+
 				var registeredType = registration.RegisteredType;
 				Assert.IsNotNull(registeredType, string.Format("Registered type is null"));
 				Console.WriteLine("Registered type");
@@ -81,6 +99,9 @@ namespace UnityConfigEditor.Test
 				Console.WriteLine("Lifetime manager type");
 				Console.WriteLine("\t- {0}", lifetimeManagerType.Namespace);
 				Console.WriteLine("\t- {0}", lifetimeManagerType.Name);
+				Console.WriteLine("* * * * * * * * * * *");
+				Console.WriteLine(registration.GetMappingAsString());
+				Console.WriteLine("* * * * * * * * * * *");
 				Console.WriteLine("* * * * * * * * * * *");
 			}
 		}
