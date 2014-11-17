@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3056B634-3C71-4074-9F8F-E9CC9F443D52}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{E82992BD-3F1F-4AFD-9BF2-55F153839C2B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UnityConfigEditor.DataModel</RootNamespace>
-    <AssemblyName>UnityConfigEditor.DataModel</AssemblyName>
+    <RootNamespace>SourceApp.Implementation</RootNamespace>
+    <AssemblyName>SourceApp.Implementation</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +25,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,14 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\ModelBase.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UnityConfigEditor.Interface\UnityConfigEditor.Interface.csproj">
-      <Project>{dee11323-453a-404b-81ef-e315fbbf45b3}</Project>
-      <Name>UnityConfigEditor.Interface</Name>
+    <ProjectReference Include="..\SourceApp.Interface\SourceApp.Interface.csproj">
+      <Project>{8537C811-30D7-4FF8-A858-673B4C91DCB2}</Project>
+      <Name>SourceApp.Interface</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

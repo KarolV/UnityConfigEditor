@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3056B634-3C71-4074-9F8F-E9CC9F443D52}</ProjectGuid>
+    <ProjectGuid>{8537C811-30D7-4FF8-A858-673B4C91DCB2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UnityConfigEditor.DataModel</RootNamespace>
-    <AssemblyName>UnityConfigEditor.DataModel</AssemblyName>
+    <RootNamespace>SourceApp.Interface</RootNamespace>
+    <AssemblyName>SourceApp.Interface</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -41,14 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\ModelBase.cs" />
+    <Compile Include="ITestObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UnityConfigEditor.Interface\UnityConfigEditor.Interface.csproj">
-      <Project>{dee11323-453a-404b-81ef-e315fbbf45b3}</Project>
-      <Name>UnityConfigEditor.Interface</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
