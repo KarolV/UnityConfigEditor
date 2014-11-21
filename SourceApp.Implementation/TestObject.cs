@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Microsoft.Practices.Unity;
+
 using SourceApp.Interface;
 
 namespace SourceApp.Implementation
@@ -8,6 +10,7 @@ namespace SourceApp.Implementation
 	{
 		private string _text;
 
+		[InjectionConstructor]
 		public TestObject(Guid id)
 		{
 			ID = id;

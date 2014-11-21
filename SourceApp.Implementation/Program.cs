@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Linq;
 
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
@@ -20,12 +22,11 @@ namespace SourceApp.Implementation
 				return;
 			}
 
-			var container = new UnityContainer();
+			IUnityContainer container = new UnityContainer();
 
-			var guid = Guid.NewGuid();
-
-			foreach(var arg in args)
+			foreach (var arg in args)
 			{
+				container = new UnityContainer();
 				switch (arg)
 				{
 					case "m":
@@ -39,17 +40,35 @@ namespace SourceApp.Implementation
 					case "x":
 					case "xml":
 						SetContainer_ByConfig(container);
-						container.RegisterType<ITestObject, TestObject>(new InjectionConstructor(guid));
 						break;
 				}
 
-				var manager = container.Resolve<IManager>();
-				//manager.GetTestObject().SetText(guid.ToString());
-				Console.WriteLine(manager.GetTestObject().ToString());
+				IManager manager;
+				try
+				{
+					manager = container.Resolve<IManager>();
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Arg: {0}; registrations: {1}\n{2}", arg.ToUpperInvariant(), container.Registrations.Count(), e);
+					foreach(var reg in container.Registrations)
+						Console.WriteLine("\t- {0}", reg.RegisteredType);
 
-				manager = container.Resolve<IManager>();
-				manager.GetTestObject().SetText("shit");
-				Console.WriteLine(manager.GetTestObject().ToString());
+					PressToContinue();
+					continue;
+				}
+
+				if (!manager.GetPresentation().Load(string.Format("{0} => insert name: ", arg.ToUpperInvariant()))) continue;
+
+				manager.GetPresentation().GetContent();
+				var content = manager.GetPresentation().Content;
+				manager.GetPresentation()
+				       .GetContent("{0}[{1}]; Word count = {2}",
+				                   content.Text,
+				                   content.ID.ToString(),
+				                   content.Text.Split(' ').Count().ToString(CultureInfo.InvariantCulture));
+
+				Console.WriteLine("Registrations count: {0}",container.Registrations.Count());
 
 				PressToContinue();
 			}
@@ -57,23 +76,23 @@ namespace SourceApp.Implementation
 
 		private static void SetContainer_ByConvention(IUnityContainer container)
 		{
-			container.RegisterTypes(AllClasses.FromAssembliesInBasePath(),
-			                        WithMappings.FromMatchingInterface,
+			container.RegisterTypes(AllClasses.FromLoadedAssemblies(),
+			                        WithMappings.FromAllInterfaces,
 			                        WithName.Default);
-			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()));
+			container.RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));			
 		}
 
 		private static void SetContainer_Mixed(IUnityContainer container)
 		{
 			container.LoadConfiguration("testContainer");
 
-			container.RegisterType<ITestObject, TestObject>()
-					 .RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
+			container.RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
 		}
 
 		private static void SetContainer_ByConfig(IUnityContainer container)
 		{
-			container.LoadConfiguration("testContainer");
+			container.RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
+			container.LoadConfiguration("fullContainer");
 		}
 
 		private static void PressToContinue(bool isEmpty = false)

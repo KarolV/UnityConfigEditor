@@ -4,23 +4,18 @@ namespace SourceApp.Implementation
 {
 	public sealed class Manager : IManager
 	{
-		private ITestObject TestObject { get; set; }
+		private IPresentation Presentation { get; set; }
 
-		public Manager(ITestObject testObject)
+		public Manager(IPresentation presentation)
 		{
-			this.SetTestObject(testObject);
+			this.Presentation = presentation;
 		}
 
 		#region Implementation of IManager
 
-		public void SetTestObject(ITestObject testObject)
+		public IPresentation GetPresentation()
 		{
-			this.TestObject = testObject;
-		}
-
-		public ITestObject GetTestObject()
-		{
-			return this.TestObject;
+			return this.Presentation;
 		}
 
 		#endregion

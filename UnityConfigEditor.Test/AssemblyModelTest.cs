@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
@@ -30,10 +29,11 @@ namespace UnityConfigEditor.Test
 			var container = new UnityContainer();
 
 			container.RegisterType<ITestObject, TestObject>("noparam")
-			         .RegisterType<IManager, Manager>()
-			         .RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
+			         .RegisterType<IPresentation, ConsolePresentation>("console")
+					 .RegisterType<IManager, Manager>()
+					 .RegisterType<ITestObject, TestObject>(new InjectionConstructor(Guid.NewGuid()));
 
-			const int expectedCount = 3;
+			const int expectedCount = 4;
 
 			CommonEvaluate(container, expectedCount);
 		}
@@ -45,7 +45,7 @@ namespace UnityConfigEditor.Test
 
 			container.LoadConfiguration("fullContainer");
 
-			const int expectedCount = 3;
+			const int expectedCount = 4;
 
 			CommonEvaluate(container, expectedCount);
 		}
@@ -58,9 +58,10 @@ namespace UnityConfigEditor.Test
 			                        WithMappings.FromMatchingInterface,
 			                        WithName.Default);
 
-			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()));
+			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()))
+			         .RegisterType<IPresentation, ConsolePresentation>("console");
 
-			const int expectedCount = 3;
+			const int expectedCount = 4;
 
 			CommonEvaluate(container, expectedCount);
 		}
@@ -78,7 +79,7 @@ namespace UnityConfigEditor.Test
 					                 .All(x => x != r.MappedToType.Name)))
 			{
 				Assert.IsNotNull(registration, string.Format("Registration is null"));
-				Console.WriteLine("Registration: {0}", registration.Name ?? "[default]");
+				Console.WriteLine("Registration name: {0}", (registration.Name ?? "[default]").ToUpperInvariant());
 
 				var registeredType = registration.RegisteredType;
 				Assert.IsNotNull(registeredType, string.Format("Registered type is null"));
