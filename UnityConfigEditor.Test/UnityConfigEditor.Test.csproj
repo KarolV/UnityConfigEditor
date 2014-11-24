@@ -80,10 +80,6 @@
       <Project>{8537C811-30D7-4FF8-A858-673B4C91DCB2}</Project>
       <Name>SourceApp.Interface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UnityConfigEditor.Interface\UnityConfigEditor.Interface.csproj">
-      <Project>{dee11323-453a-404b-81ef-e315fbbf45b3}</Project>
-      <Name>UnityConfigEditor.Interface</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
