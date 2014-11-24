@@ -55,11 +55,10 @@ namespace UnityConfigEditor.Test
 		{
 			var container = new UnityContainer();
 			container.RegisterTypes(AllClasses.FromAssembliesInBasePath(),
-			                        WithMappings.FromMatchingInterface,
+			                        WithMappings.FromAllInterfaces,
 			                        WithName.Default);
 
-			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()))
-			         .RegisterType<IPresentation, ConsolePresentation>("console");
+			container.RegisterType<ITestObject, TestObject>("GUID param", new InjectionConstructor(Guid.NewGuid()));
 
 			const int expectedCount = 4;
 
